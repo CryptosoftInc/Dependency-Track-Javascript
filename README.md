@@ -12,7 +12,9 @@ This GitHub action will create a valid Software Bill-of-Materials (SBOM) contain
 ## Inputs
 
 1) Dependency-Track url 
-2) Dependency-Track api-key.
+2) Dependency-Track api-key
+3) Project Name
+4) Project Version
 
 
 ## Output
