@@ -1,0 +1,47 @@
+name: CryptosoftInc
+description: This action builds a CycloneDX Format Software Bill of Materials (SBOM) for a repository and sends it to a OWASP DT server
+inputs:
+  dt-url:
+    description: 'The URL of the Dependency-Track API server to send the SBOM to OWASP Dependency Track Server'
+    required: true
+  api-key:
+    description: 'The API key used to authenticate with the Dependency-Track API server.'
+    required: true
+  project-name:
+    description: 'Project name.'
+    required: true
+  project-version:
+    description: 'Project version.'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2 
+    - run: npm install
+      shell: bash
+    - id: sbom
+      uses: AppThreat/cdxgen-action@v1
+      with:
+        output: './reports/bom.xml'
+    - id: saveBom
+      run: |
+        echo -n "$(cat './reports/bom.xml')" > output.xml
+      shell: bash
+    - run: |
+        echo -n "${{ inputs.dt-url}}"
+        echo -n "${{ inputs.api-key }}"
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+        TAG_REF=${{ github.ref }}
+        if [[ "$TAG_REF" == "refs/tags/"* ]]; then
+          VERSION=$(echo "$TAG_REF" | sed 's/refs\/tags\///')
+        else
+          VERSION="1.0.0"
+        fi
+        curl -k -X POST "${{ inputs.dt-url}}" \
+          -H "Content-Type: multipart/form-data" \
+          -H "X-Api-Key:${{ inputs.api-key }}" \
+          -F "autoCreate=true" \
+          -F "projectName=${{ inputs.project-name}}" \
+          -F "projectVersion=${{ inputs.project-version}}" \
+          -F "bom=@output.xml"
+      shell: bash
