@@ -39,9 +39,9 @@ jobs:
   myJob:
     runs-on: ubuntu-latest
     steps:
-      - name:Cryptosoft-SBOM-Dependency-Track
-        id:Cryptosoft-SBOM-Dependency-Track
-        uses:CryptosoftInc/Dependency-Track-javascript@1.0.0
+      - name: Cryptosoft-SBOM-Dependency-Track
+        id: Cryptosoft-SBOM-Dependency-Track
+        uses: CryptosoftInc/Dependency-Track-javascript@1.0.0
         with:
           dt-url: <your dt url>
           api-key: ${{ secrets.apiKey }}
