@@ -41,7 +41,7 @@ jobs:
     steps:
     - name:Cryptosoft-SBOM-generator
       id: Cryptosoft-SBOM-generator
-      uses: CryptosoftInc/Cryptosoft-SBOM-javascript@1.0.0
+     uses: CryptosoftInc/Dependency-Track-javascript@1.0.0
       with:
         dt-url: <your dt url>
         api-key: ${{ secrets.apiKey }}
