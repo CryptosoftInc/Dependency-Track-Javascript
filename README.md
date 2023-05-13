@@ -44,7 +44,7 @@ jobs:
         uses: CryptosoftInc/Dependency-Track-Javascript@1.0.0
         with:
           dt-url: <your dt url>
-          # you can store api-key obtained in you github secrets. 
+          # you can store api-key obtained in your github secrets. 
           api-key: ${{ secrets.apiKey }}
           project-name: <your project name>
           project-version: <your project >
