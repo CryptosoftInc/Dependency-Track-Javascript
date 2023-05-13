@@ -22,7 +22,7 @@ The default token output confirms that the SBOM has been successfully uploaded t
 
 ## Usage
 ```
-uses: CryptosoftInc/Dependency-Track-javascript@1.0.0
+uses: CryptosoftInc/Dependency-Track-Javascript@1.0.0
 ```
 
 ## To use this action, follow these steps:
@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Cryptosoft-SBOM-Dependency-Track
         id: Cryptosoft-SBOM-Dependency-Track
-        uses: CryptosoftInc/Dependency-Track-javascript@1.0.0
+        uses: CryptosoftInc/Dependency-Track-Javascript@1.0.0
         with:
           dt-url: <your dt url>
           api-key: ${{ secrets.apiKey }}
