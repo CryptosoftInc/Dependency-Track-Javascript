@@ -28,7 +28,7 @@ uses: CryptosoftInc/Dependency-Track-Javascript@1.0.0
 ## To use this action, follow these steps:
 
 1) Navigate to your GitHub project directory.
-2) Create a new file named .github/workflows/<file-name>.yaml.
+2) Create a new file named .github/workflows/file-name.yaml.
 3) Copy the provided code snippet below and paste it into the newly created YAML file.
 
 ### Use below snippet for NPM Projects
