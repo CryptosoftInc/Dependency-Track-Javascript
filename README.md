@@ -47,7 +47,7 @@ jobs:
           # you can store api-key obtained in your github secrets. 
           api-key: ${{ secrets.apiKey }}
           project-name: <your project name>
-          project-version: <your project >
+          project-version: <your project version >
 ```
  
 ## Contribution
