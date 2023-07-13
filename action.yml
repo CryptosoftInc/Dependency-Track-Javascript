@@ -40,8 +40,15 @@ runs:
         curl -k -X POST "${{ inputs.dt-url}}" \
           -H "Content-Type: multipart/form-data" \
           -H "X-Api-Key:${{ inputs.api-key }}" \
-          -F "autoCreate=true" \
-          -F "projectName=${{ inputs.project-name}}" \
-          -F "projectVersion=${{ inputs.project-version}}" \
-          -F "bom=@output.xml"
+          -F "data={
+                    \"autoCreate\": true,
+                    \"projectName\": \"${{ inputs.project-name}}\",
+                    \"projectVersion\": \"${{ inputs.project-version}}\"
+                    $(if [[ -n "${{ inputs.parent-name}}" ]]; then
+                        echo ", \"parentName\": \"${{ inputs.parent-name}}\""
+                    fi)
+                    $(if [[ -n "${{ inputs.parent-version}}" ]]; then
+                        echo ", \"parentVersion\": \"${{ inputs.parent-version}}\""
+                    fi)
+                   }" \
       shell: bash
