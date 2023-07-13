@@ -26,12 +26,9 @@ runs:
     - run: npm install
       shell: bash
     - id: sbom
-      uses: AppThreat/cdxgen-action@v1
-      with:
-        output: './reports/bom.xml'
-    - id: saveBom
-      run: |
-        echo -n "$(cat './reports/bom.xml')" > sbom.xml
+        run: |
+             export FETCH_LICENSE=true
+             npm install -g @cyclonedx/cdxgen@8.6.0 && cdxgen -r -o bom.json
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
@@ -43,7 +40,7 @@ runs:
             -F "projectVersion=${{ inputs.project-version}}" \
             -F "parentName=${{ inputs.parent-name}}" \
             -F "parentVersion=${{ inputs.parent-version}}" \
-            -F "bom=@sbom.xml"
+            -F "bom=@bom.json"
           else
           curl -k -X POST "${{ inputs.dt-url}}" \
             -H "Content-Type: multipart/form-data" \
@@ -51,7 +48,7 @@ runs:
             -F "autoCreate=true" \
             -F "projectName=${{ inputs.project-name}}" \
             -F "projectVersion=${{ inputs.project-version}}" \
-            -F "bom=@sbom.xml"
+            -F "bom=@bom.json"
           fi
       shell: bash
 
