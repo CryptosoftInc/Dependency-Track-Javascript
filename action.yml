@@ -31,7 +31,7 @@ runs:
         output: './reports/bom.xml'
     - id: saveBom
       run: |
-        echo -n "$(cat './reports/bom.xml')" > output.xml
+        echo -n "$(cat './reports/bom.xml')" > sbom.xml
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
