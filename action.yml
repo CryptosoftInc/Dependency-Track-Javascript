@@ -13,6 +13,12 @@ inputs:
   project-version:
     description: 'Project version.'
     required: true
+  parent-name:
+    description: 'Parent Project name.'
+    required: false
+  parent-version:
+    description: 'Parent Project version.'
+    required: false
 runs:
   using: "composite"
   steps:
