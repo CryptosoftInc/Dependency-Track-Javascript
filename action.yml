@@ -35,22 +35,23 @@ runs:
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
-          curl -k -X POST "https://dt-api.staging.cryptosoft.com/api/v1/bom" \
+          curl -k -X POST "${{ inputs.dt-url}" \
             -H "Content-Type: multipart/form-data" \
-            -H "X-Api-Key:1DMIXAnGtTIeTQDddlHSvpj6d3as174S" \
+            -H "X-Api-Key:${{ inputs.api-key }}" \
             -F "autoCreate=true" \
-            -F "projectName=Testmultiplecases" \
-            -F "projectVersion=1.9.8" \
+            -F "projectName=${{ inputs.project-name}" \
+            -F "projectVersion=${{ inputs.project-version}}" \
             -F "parentName=${{ inputs.parent-name}}" \
-            -F "parentVersion=${{ inputs.parent-name}}" \
+            -F "parentVersion=${{ inputs.parent-version}}" \
             -F "bom=@sbom.xml"
           else
-          curl -k -X POST "https://dt-api.staging.cryptosoft.com/api/v1/bom" \
+          curl -k -X POST "${{ inputs.dt-url}}" \
             -H "Content-Type: multipart/form-data" \
-            -H "X-Api-Key:1DMIXAnGtTIeTQDddlHSvpj6d3as174S" \
+            -H "X-Api-Key:${{ inputs.api-key }}" \
             -F "autoCreate=true" \
-            -F "projectName=Testmultiplecases" \
-            -F "projectVersion=1.9.8" \
+            -F "projectName=${{ inputs.project-name}}" \
+            -F "projectVersion=${{ inputs.project-version}}" \
             -F "bom=@sbom.xml"
           fi
       shell: bash
+
