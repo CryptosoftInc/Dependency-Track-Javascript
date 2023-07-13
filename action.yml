@@ -34,27 +34,24 @@ runs:
         echo -n "$(cat './reports/bom.xml')" > output.xml
       shell: bash
     - run: |
-        echo -n "${{ inputs.dt-url}}"
-        echo -n "${{ inputs.api-key }}"
-        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-        TAG_REF=${{ github.ref }}
-        if [[ "$TAG_REF" == "refs/tags/"* ]]; then
-          VERSION=$(echo "$TAG_REF" | sed 's/refs\/tags\///')
-        else
-          VERSION="1.0.0"
-        fi
-        curl -k -X POST "${{ inputs.dt-url}}" \
-          -H "Content-Type: multipart/form-data" \
-          -H "X-Api-Key:${{ inputs.api-key }}" \
-          -F "data={
-                    \"autoCreate\": true,
-                    \"projectName\": \"${{ inputs.project-name}}\",
-                    \"projectVersion\": \"${{ inputs.project-version}}\"
-                    $(if [[ -n "${{ inputs.parent-name}}" ]]; then
-                        echo ", \"parentName\": \"${{ inputs.parent-name}}\""
-                    fi)
-                    $(if [[ -n "${{ inputs.parent-version}}" ]]; then
-                        echo ", \"parentVersion\": \"${{ inputs.parent-version}}\""
-                    fi)
-                   }" \
+        run: |
+         if [ ${{ inputs.parent-name}} && ${{ inputs.parent-version}} ]; then
+          curl -k -X POST "https://dt-api.staging.cryptosoft.com/api/v1/bom" \
+            -H "Content-Type: multipart/form-data" \
+            -H "X-Api-Key:1DMIXAnGtTIeTQDddlHSvpj6d3as174S" \
+            -F "autoCreate=true" \
+            -F "projectName=Testmultiplecases" \
+            -F "projectVersion=1.9.8" \
+            -F "parentName=${{ inputs.parent-name}}" \
+            -F "parentVersion=${{ inputs.parent-name}}" \
+            -F "bom=@sbom.xml"
+          else
+          curl -k -X POST "https://dt-api.staging.cryptosoft.com/api/v1/bom" \
+            -H "Content-Type: multipart/form-data" \
+            -H "X-Api-Key:1DMIXAnGtTIeTQDddlHSvpj6d3as174S" \
+            -F "autoCreate=true" \
+            -F "projectName=Testmultiplecases" \
+            -F "projectVersion=1.9.8" \
+            -F "bom=@sbom.xml"
+          fi
       shell: bash
