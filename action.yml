@@ -34,7 +34,6 @@ runs:
         echo -n "$(cat './reports/bom.xml')" > output.xml
       shell: bash
     - run: |
-        run: |
          if [ ${{ inputs.parent-name}} && ${{ inputs.parent-version}} ]; then
           curl -k -X POST "https://dt-api.staging.cryptosoft.com/api/v1/bom" \
             -H "Content-Type: multipart/form-data" \
