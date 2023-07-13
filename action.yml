@@ -35,7 +35,7 @@ runs:
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
-          curl -k -X POST "${{ inputs.dt-url}" \
+          curl -k -X POST "${{ inputs.dt-url}}" \
             -H "Content-Type: multipart/form-data" \
             -H "X-Api-Key:${{ inputs.api-key }}" \
             -F "autoCreate=true" \
