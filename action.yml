@@ -46,6 +46,9 @@ runs:
               cdxgen -v
               cdxgen --help
 
+              cdxgen -r -o bom.json
+              cat bom.json
+
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
