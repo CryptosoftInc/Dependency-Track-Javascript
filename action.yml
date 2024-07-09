@@ -1,4 +1,4 @@
-name: CryptoSoftInc-SBOM
+name: cdxgen-dtrack-action
 description: This action builds a CycloneDX Format Software Bill of Materials (SBOM) for a repository and sends it to a OWASP DT server
 inputs:
   dt-url:
@@ -22,12 +22,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v2 
+    - uses: actions/checkout@v4
     - run: npm install
       shell: bash
     - run: |
              export FETCH_LICENSE=true
-             npm install -g @cyclonedx/cdxgen@8.6.0 && cdxgen -r -o bom.json
+             npm install -g @cyclonedx/cdxgen@10.8.0 && cdxgen -r -o bom.json
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
