@@ -34,6 +34,7 @@ runs:
           curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
             -H "Content-Type: multipart/form-data" \
             -H "X-Api-Key:${{ inputs.api-key }}" \
+            -H "ngrok-skip-browser-warning: any" \
             -F "autoCreate=true" \
             -F "projectName=${{ inputs.project-name}}" \
             -F "projectVersion=${{ inputs.project-version}}" \
@@ -44,6 +45,7 @@ runs:
           curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
             -H "Content-Type: multipart/form-data" \
             -H "X-Api-Key:${{ inputs.api-key }}" \
+            -H "ngrok-skip-browser-warning: any" \
             -F "autoCreate=true" \
             -F "projectName=${{ inputs.project-name}}" \
             -F "projectVersion=${{ inputs.project-version}}" \
