@@ -23,11 +23,29 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v4
-    - run: npm install
+    - run: |
+              echo "[*] Installing Node.js..."
+              export NVM_DIR="$HOME/.nvm"
+              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+              [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+              source ~/.bashrc
+              nvm install 20
+
+              node -v
+              npm -v
       shell: bash
     - run: |
-             export FETCH_LICENSE=true
-             npm install -g @cyclonedx/cdxgen@10.8.0 && cdxgen -r -o bom.json
+              export FETCH_LICENSE=true
+
+              echo "[*] Installing cdxgen..."
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+              npm install -g @cyclonedx/cdxgen
+
+              cdxgen -v
+              cdxgen --help
+
       shell: bash
     - run: |
           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
