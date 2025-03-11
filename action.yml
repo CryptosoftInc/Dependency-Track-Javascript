@@ -1,5 +1,6 @@
-name: CryptoSoftInc-SBOM
-description: This action builds a CycloneDX Format Software Bill of Materials (SBOM) for a repository and sends it to a OWASP DT server
+name: Cryptosoft-SBOM-DT
+description: This action builds a CycloneDX Format Software Bill of Materials (SBOM) for a repository and sends it to an OWASP DT server
+
 inputs:
   dt-url:
     description: 'The URL of the Dependency-Track API server to send the SBOM to OWASP Dependency Track Server'
@@ -15,39 +16,54 @@ inputs:
     required: true
   parent-name:
     description: 'Parent Project name.'
-    required: false
+    required: true
   parent-version:
-    description: 'Parent Project version.'
-    required: false
+    description: 'Parent Project Version.'
+    required: true
+
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4 
-    - run: npm install
+    - uses: actions/checkout@v2
+    - id: sbom
+      uses: AppThreat/cdxgen-action@v1
+      with:
+        output: './reports/bom.xml'
+    - id: saveBom
+      run: |
+        echo -n "$(cat './reports/bom.xml')" > sbom.xml
       shell: bash
-    - run: |
-             export FETCH_LICENSE=true
-             npm install -g @cyclonedx/cdxgen && cdxgen -r -o bom.json
-      shell: bash
-    - run: |
-          if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
-          curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
-            -H "Content-Type: multipart/form-data" \
-            -H "X-Api-Key:${{ inputs.api-key }}" \
-            -F "autoCreate=true" \
-            -F "projectName=${{ inputs.project-name}}" \
-            -F "projectVersion=${{ inputs.project-version}}" \
-            -F "parentName=${{ inputs.parent-name}}" \
-            -F "parentVersion=${{ inputs.parent-version}}" \
-            -F "bom=@bom.json"
-          else
-          curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
-            -H "Content-Type: multipart/form-data" \
-            -H "X-Api-Key:${{ inputs.api-key }}" \
-            -F "autoCreate=true" \
-            -F "projectName=${{ inputs.project-name}}" \
-            -F "projectVersion=${{ inputs.project-version}}" \
-            -F "bom=@bom.json"
-          fi
+    - name: Upload SBOM to OWASP Dependency-Track
+      id: upload_sbom
+      run: |
+        RESPONSE=$(curl -s -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
+          -H "Content-Type: multipart/form-data" \
+          -H "X-Api-Key: ${{ inputs.api-key }}" \
+          -F "autoCreate=true" \
+          -F "projectName=${{ inputs.project-name }}" \
+          -F "projectVersion=${{ inputs.project-version }}" \
+          -F "parentName=${{ inputs.parent-name }}" \
+          -F "parentVersion=${{ inputs.parent-version }}" \
+          -F "bom=@sbom.xml")
+
+        echo "API Response: $RESPONSE"
+        TOKEN=$(echo "$RESPONSE" | jq -r '.token')
+
+        if [[ -n "$TOKEN" && "$TOKEN" != "null" ]]; then
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+          echo "SBOM upload successful. Token: $TOKEN"
+        else
+          echo "SBOM upload failed or no token returned!"
+          exit 1
+        fi
       shell: bash
 
+    - name: Check SBOM Processing Status
+      run: |
+        if [[ -n "$TOKEN" ]]; then
+          curl -k -X GET "${{ inputs.dt-url }}/api/v1/bom/token/$TOKEN" \
+            -H "X-Api-Key: ${{ inputs.api-key }}"
+        else
+          echo "No token received, skipping status check."
+        fi
+      shell: bash
