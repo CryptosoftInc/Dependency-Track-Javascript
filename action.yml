@@ -1,52 +1,57 @@
 name: CryptoSoftInc-SBOM
- description: This action builds a CycloneDX Format Software Bill of Materials (SBOM) for a repository and sends it to a OWASP DT server
- inputs:
-   dt-url:
-     description: 'The URL of the Dependency-Track API server to send the SBOM to OWASP Dependency Track Server'
-     required: true
-   api-key:
-     description: 'The API key used to authenticate with the Dependency-Track API server.'
-     required: true
-   project-name:
-     description: 'Project name.'
-     required: true
-   project-version:
-     description: 'Project version.'
-     required: true
-   parent-name:
-     description: 'Parent Project name.'
-     required: false
-   parent-version:
-     description: 'Parent Project version.'
-     required: false
- runs:
-   using: "composite"
-   steps:
-     - uses: actions/checkout@v4 
-     - run: npm install
-       shell: bash
-     - run: |
-              export FETCH_LICENSE=true
-              npm install -g @cyclonedx/cdxgen && cdxgen -r -o bom.json
-       shell: bash
-     - run: |
-           if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
-           curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
-             -H "Content-Type: multipart/form-data" \
-             -H "X-Api-Key:${{ inputs.api-key }}" \
-             -F "autoCreate=true" \
-             -F "projectName=${{ inputs.project-name}}" \
-             -F "projectVersion=${{ inputs.project-version}}" \
-             -F "parentName=${{ inputs.parent-name}}" \
-             -F "parentVersion=${{ inputs.parent-version}}" \
-             -F "bom=@bom.json"
-           else
-           curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
-             -H "Content-Type: multipart/form-data" \
-             -H "X-Api-Key:${{ inputs.api-key }}" \
-             -F "autoCreate=true" \
-             -F "projectName=${{ inputs.project-name}}" \
-             -F "projectVersion=${{ inputs.project-version}}" \
-             -F "bom=@bom.json"
-           fi
-       shell: bash
+description: This action builds a CycloneDX Format Software Bill of Materials (SBOM) for a repository and sends it to an OWASP DT server
+
+inputs:
+  dt-url:
+    description: 'The URL of the Dependency-Track API server to send the SBOM'
+    required: true
+  api-key:
+    description: 'The API key used to authenticate with the Dependency-Track API server.'
+    required: true
+  project-name:
+    description: 'Project name.'
+    required: true
+  project-version:
+    description: 'Project version.'
+    required: true
+  parent-name:
+    description: 'Parent Project name.'
+    required: false
+  parent-version:
+    description: 'Parent Project version.'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4 
+
+    - run: npm install
+      shell: bash
+
+    - run: |
+        export FETCH_LICENSE=true
+        npm install -g @cyclonedx/cdxgen && cdxgen -r -o bom.xml
+      shell: bash
+
+    - run: |
+        if [[ -n "${{ inputs.parent-name }}" && -n "${{ inputs.parent-version }}" ]]; then
+          curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
+            -H "Content-Type: multipart/form-data" \
+            -H "X-Api-Key: ${{ inputs.api-key }}" \
+            -F "autoCreate=true" \
+            -F "projectName=${{ inputs.project-name }}" \
+            -F "projectVersion=${{ inputs.project-version }}" \
+            -F "parentName=${{ inputs.parent-name }}" \
+            -F "parentVersion=${{ inputs.parent-version }}" \
+            -F "bom=@bom.xml"
+        else
+          curl -k -X POST "${{ inputs.dt-url }}/api/v1/bom" \
+            -H "Content-Type: multipart/form-data" \
+            -H "X-Api-Key: ${{ inputs.api-key }}" \
+            -F "autoCreate=true" \
+            -F "projectName=${{ inputs.project-name }}" \
+            -F "projectVersion=${{ inputs.project-version }}" \
+            -F "bom=@bom.xml"
+        fi
+      shell: bash
